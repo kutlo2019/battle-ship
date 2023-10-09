@@ -21,15 +21,17 @@ module.exports = class Gameboard {
   }
 
   placeShips() {
-    const ship1 = new Ship(0, 0, 2);
-    for (let i = 0; i < (ship1.length + i); i++) {
-      console.log(`cell[0][${i}]`, this.cells[0][i]);
-      // this.cells[0][i].hasShip = true;
-    }
+    this._placeShip(0, 0, 2);
+    this._placeShip(3, 4, 3);
+    this._placeShip(8, 4, 5);
+    this._placeShip(6, 1, 4);
+    this._placeShip(5, 7, 1);
+  }
 
-    const ship2 = new Ship(3, 4, 3);
-    for (let i = 4; i < (ship2.length + i); i++) {
-      this.cells[3][i].hasShip = true;
+  _placeShip(x, y, length) {
+    const ship = new Ship(x, y, length);
+    for (let i = y; i < (ship.length + y); i++) {
+      this.cells[x][i].hasShip = true;
     }
   }
   receiveAttack() {
