@@ -1,9 +1,10 @@
 module.exports = class Ship {
-  constructor(x, y, length) {
+  constructor(x, y, length, ID) {
     this.x = x;
     this.y = y;
     this.length = length;
     this.hits = 0;
+    this.shipID = ID;
   }
 
   hit() {
