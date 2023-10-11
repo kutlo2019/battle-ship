@@ -1,4 +1,5 @@
-const Gameboard = require("../Gameboard")
+const Gameboard = require("../Gameboard");
+const Ship = require("../Ship");
 
 describe("Gameboard", () => {
   const gameBoard = new Gameboard();
@@ -44,7 +45,11 @@ describe("Gameboard", () => {
   });
 
   describe(".receiveAttack", () => {
-    it("takes a pair of coordinates", () => {});
+    it("analyses attack at (x=3, y=5)", () => {
+      expect(gameBoard.cells[3][5].isAttacked).toBeFalsy();
+      gameBoard.receiveAttack(3,5);
+      expect(gameBoard.cells[3][5].isAttacked).toBeTruthy();
+    });
     it("determine wether the attack hit a ship", () => {});
   });
 
