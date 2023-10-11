@@ -3,6 +3,7 @@ import Cell from "./Cell";
 
 module.exports = class Gameboard {
   cells = [];
+  ships = [];
 
   constructor() {
     this.createCells();
@@ -21,20 +22,24 @@ module.exports = class Gameboard {
   }
 
   placeShips() {
-    this._placeShip(0, 0, 2);
-    this._placeShip(3, 4, 3);
-    this._placeShip(8, 4, 5);
-    this._placeShip(6, 1, 4);
-    this._placeShip(5, 7, 1);
+    this._placeShip(0, 0, 2, 1);
+    this._placeShip(3, 4, 3, 2);
+    this._placeShip(8, 4, 5, 3);
+    this._placeShip(6, 1, 4, 4);
+    this._placeShip(5, 7, 1, 5);
   }
 
-  _placeShip(x, y, length) {
-    const ship = new Ship(x, y, length);
+  _placeShip(x, y, length, ID) {
+    const ship = new Ship(x, y, length, ID);
+    this.ships.push(ship);
     for (let i = y; i < (ship.length + y); i++) {
       this.cells[x][i].hasShip = true;
+      this.cells[x][i].shipID = ID; 
     }
   }
-  receiveAttack() {
-
+  receiveAttack(x, y) {
+    this.cells[x][y].isAttacked = true;
+    const shipID = this.cells[x][y].shipID;
+    this.ships.findIndex(ship => ship.shipID === shipID);
   }
 }
