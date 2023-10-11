@@ -39,7 +39,14 @@ module.exports = class Gameboard {
   }
   receiveAttack(x, y) {
     this.cells[x][y].isAttacked = true;
-    const shipID = this.cells[x][y].shipID;
-    this.ships.findIndex(ship => ship.shipID === shipID);
+    let index = this.ships.findIndex(ship => ship.shipID === this.cells[x][y].shipID);
+    if (index !== -1) {
+      this.ships[index].hit();
+      this.ships[index].isSunk();
+    }
+  }
+
+  allSunk() {
+    return this.ships.every((ship) => ship.isSunk());
   }
 }
