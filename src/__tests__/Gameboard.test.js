@@ -45,21 +45,28 @@ describe("Gameboard", () => {
   });
 
   describe(".receiveAttack", () => {
-    it("analyses attack at (x=3, y=5)", () => {
+    it("analyses attack at (x=3, y=5), expects ship2 to be hit", () => {
+      expect(gameBoard.ships[1].hits).toBe(0);
       expect(gameBoard.cells[3][5].isAttacked).toBeFalsy();
-      gameBoard.receiveAttack(3,5);
+      gameBoard.receiveAttack(3, 5);
       expect(gameBoard.cells[3][5].isAttacked).toBeTruthy();
+      expect(gameBoard.ships[1].hits).toBe(1);
     });
-    it("determine wether the attack hit a ship", () => {});
-  });
 
-  describe("keeping track of missed attacks", () => {
-    it("displays the missed attacks", () => {});
-  });
-
-  describe("all ships sunk", () => {
+    it("determine wether missed attack (4, 2) is registered", () => {
+      expect(gameBoard.cells[4][2].isAttacked).toBeFalsy();
+      gameBoard.receiveAttack(4, 2);
+      expect(gameBoard.cells[4][2].isAttacked).toBeTruthy();
+    });
+    
     it("Can report wether or not all their ships have been sunk", () => {
-
+      expect(gameBoard.allSunk()).toBeFalsy();
+      gameBoard.cells.forEach(row => {
+        row.forEach(cell => {
+          gameBoard.receiveAttack(cell.x, cell.y);
+        })
+      });
+      expect(gameBoard.allSunk()).toBeTruthy();
     });
   });
 });
