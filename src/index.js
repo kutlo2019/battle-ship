@@ -1,3 +1,4 @@
-import createHeader from "./UIModule.js";
+import { createHeader, createPlayerBoards } from "./UIModule.js";
 
 createHeader();
+createPlayerBoards();
