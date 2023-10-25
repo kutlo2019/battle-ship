@@ -1,1 +1,3 @@
-console.log('Hello World');
+import createHeader from "./UIModule.js";
+
+createHeader();
