@@ -1,9 +1,9 @@
-import { Gameboard } from "Gameboard.js";
-
-class Player {
+export default class Player {
+  constructor(playerName) {
+    this.name = playerName;
+  }
   turn = false;
-  gameBoard = new Gameboard();
-  makeMove(x, y) {
+  makeRandomMove(x, y) {
 
   }
 }
