@@ -1,7 +1,14 @@
-const rootDiv = document.getElementById('root');
+import { publish } from './eventBus.js';
 
-const playerBoard = document.createElement('div');
-playerBoard.innerText = 'Player 1';
+const GAME_MESSAGES_DIV = _createElement('div');
+const ROOT_DIV = document.getElementById('root');
+
+function renderGameboards(gameBoards, players) {
+  const headerWrapper = createHeader();
+  const boardsWrapper = createPlayerBoards(gameBoards, players);
+  ROOT_DIV.appendChild(headerWrapper)
+  ROOT_DIV.appendChild(boardsWrapper)
+}
 
 function createHeader() {
   // Create title element
@@ -10,40 +17,56 @@ function createHeader() {
   titleH1.innerText = 'BattleShip';
   titleDiv.appendChild(titleH1);
 
-
-  // game messages element
-  const gameMessagesDiv = _createElement('div');
-  const gameMessage = _createElement('p');
-  gameMessage.innerText = 'Press the button to begin game';
+  const GAME_MESSAGES_DIV = createGameMessages('Press the button to begin game')
   const gameButton = _createElement('button');
   gameButton.innerText = 'Play';
-  gameMessagesDiv.classList.add('game-messages')
-  gameMessagesDiv.appendChild(gameMessage);
-  gameMessagesDiv.appendChild(gameButton);
+  GAME_MESSAGES_DIV.appendChild(gameButton);
 
   const headerWrapper = _createElement('div');
   headerWrapper.classList.add('header-wrapper');
 
   headerWrapper.appendChild(titleDiv);
-  headerWrapper.appendChild(gameMessagesDiv);
+  headerWrapper.appendChild(GAME_MESSAGES_DIV);
 
-  rootDiv.appendChild(headerWrapper);
+  return headerWrapper;
 }
 
-function createPlayerBoards() {
-  const boardsWrapper = _createElement('div')
+function updateMessage(message) {
+  const messageParagraph = document.querySelector('.message');
+  const newMsgDiv = _createElement('p');
+  newMsgDiv.classList.add('message');
+  newMsgDiv.innerText = message;
+  messageParagraph.parentNode.replaceChild(newMsgDiv, messageParagraph); 
+}
+
+function createGameMessages(message) {
+  GAME_MESSAGES_DIV.classList.add('game-messages');
+  const gameMessage = _createElement('p');
+  gameMessage.classList.add('message');
+  gameMessage.innerText = message;
+  GAME_MESSAGES_DIV.appendChild(gameMessage);
+  return GAME_MESSAGES_DIV;
+}
+
+function updateBoards(gameBoards, players) {
+  const boardsWrapper = document.querySelector('.boards-wrapper'); 
+  const newWrapper = createPlayerBoards(gameBoards, players);
+  boardsWrapper.parentNode.replaceChild(newWrapper, boardsWrapper); 
+}
+
+function createPlayerBoards(gameBoards, players) {
+  const boardsWrapper = _createElement('div');
   boardsWrapper.classList.add('boards-wrapper');
 
-  const player1Board = _createBoard('Player 1');
-  const player2Board = _createBoard('Computer');
+  const player1Board = _createBoard(players.player1, gameBoards.gameBoard1);
+  const player2Board = _createBoard(players.player2, gameBoards.gameBoard2);
 
   boardsWrapper.appendChild(player1Board);
   boardsWrapper.appendChild(player2Board);
-  rootDiv.appendChild(boardsWrapper);
+  return boardsWrapper;
 }
 
-function _createBoard(player) {
-
+function _createBoard(player, gameBoard) {
   const playerBoard = _createElement('div');
   playerBoard.classList.add('player-board');
 
@@ -52,13 +75,37 @@ function _createBoard(player) {
 
   for (let i = 0; i < 10; i++) {
     for (let j = 0; j < 10; j++) {
-      const cell = _createElement('div');
-      cell.classList.add('cell');
-      gridWrapper.appendChild(cell);
+      const cellDiv = _createElement('div');
+      cellDiv.classList.add('cell');
+      let currentCell = gameBoard.cells[i][j];
+      if (currentCell.hasShip) {
+        cellDiv.classList.add('hasShip');
+      }
+
+      if (currentCell.isAttacked && currentCell.hasShip) {
+        cellDiv.classList.add('shipHit');
+      }
+
+      if (currentCell.isAttacked) {
+        cellDiv.classList.add('hit');
+      }
+
+      if (!player.turn) {
+        cellDiv.addEventListener('click', () => {
+          _handleAttack(cellDiv, currentCell, gameBoard, player)
+        })
+
+      } else {
+        cellDiv.removeEventListener('click', () => {
+          _handleAttack(cellDiv, currentCell, gameBoard, player)
+        })
+      }
+  
+      gridWrapper.appendChild(cellDiv);
     } 
   }
 
-  const playerGridText = `${player} Grid`;
+  const playerGridText = `${player.name} Grid`;
   const h3 = _createElement('h3');
   h3.classList.add('board-owner');
   h3.innerText = playerGridText;
@@ -69,8 +116,22 @@ function _createBoard(player) {
   return playerBoard;
 }
 
+const _handleAttack = (cellDiv, currentCell, gameBoard, player) => {
+  if (currentCell.isAttacked) {
+    return;
+  } else {
+    gameBoard.receiveAttack(currentCell.x, currentCell.y);
+    if (currentCell.hasShip) {
+      cellDiv.classList.add('shipHit');
+    } else {
+      cellDiv.classList.add('hit');
+    }
+    publish('turnChange', player)
+  }
+}
+
 function _createElement(element) {
   return document.createElement(element);
 }
 
-export { createHeader, createPlayerBoards }
+export { renderGameboards, updateBoards, updateMessage }
