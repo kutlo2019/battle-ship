@@ -1,4 +1,4 @@
-module.exports = class Ship {
+export default class Ship {
   constructor(x, y, length, ID) {
     this.x = x;
     this.y = y;

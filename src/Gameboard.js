@@ -1,7 +1,7 @@
-import Ship from "./Ship";
-import Cell from "./Cell";
+import Ship from "./Ship.js";
+import Cell from "./Cell.js";
 
-module.exports = class Gameboard {
+export default class Gameboard {
   cells = [];
   ships = [];
 
